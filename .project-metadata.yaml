@@ -1,0 +1,75 @@
+name: Question Answering ChatBot powered by Knowledge Graph
+description: |
+  This AMP demonstrates how to leverage knowledge graph to enhance the quality and information of the answers produced by LLM in a RAG pipeline. The knowledge base consits of a sizable corpus of AI/ML related papers from arXiv. The knwoledge graph captures additional information like citations between the papers, authors and the categories that they belong to.
+
+author: Cloudera Inc.
+specification_version: 1.0
+prototype_version: 1.0
+date: "2024-07-18"
+
+environment_variables:
+  HF_TOKEN:
+    description: "Hugging Face API token"
+    required: true
+
+runtimes:
+  - editor: PBJ Workbench
+    kernel: Python 3.10
+    edition: Nvidia GPU
+
+tasks:
+  - type: run_session
+    name: Check Dependencies
+    script: 0_session-install-dependencies/check-dependencies.py
+    short_summary: Check Dependencies
+    kernel: python3
+    cpu: 1
+    memory: 8
+    gpu: 1
+  - type: run_session
+    name: Install Dependencies
+    script: 0_session-install-dependencies/install-dependencies.py
+    short_summary: Install Dependencies
+    kernel: python3
+    cpu: 1
+    memory: 8
+    gpu: 1
+  - type: create_job
+    name: Download and quantise the LLM model and embedding model
+    script: 1_download-models/download.py
+    short_summary: Download the model/embedding model from hugging face and quantise the LLM model for future in-session use.
+    entity_label: download-models-kg-amp
+    arguments: None
+    kernel: python3
+    cpu: 2
+    memory: 8
+    gpu: 1
+    environment:
+      TASK_TYPE: CREATE/RUN_JOB
+  - type: run_job
+    entity_label: download-models-kg-amp
+  - type: create_job
+    name: Build the Knowledge Graph
+    script: 2_build-knowledge-graph/ingest-arxiv-data.py
+    short_summary: Ingest arXiv papers, chunk them and store embedding vectors in a graph database along with author, citation and category information.
+    entity_label: build-graph-kg-amp
+    arguments: None
+    kernel: python3
+    cpu: 2
+    memory: 16
+    gpu: 1
+    environment:
+      TASK_TYPE: CREATE/RUN_JOB
+  - type: run_job
+    entity_label: build-graph-kg-amp
+  - type: start_application
+    name: Start the RAG QA application
+    script: 3_launch_application/streamlit_entrypoint.py
+    short_summary: Run the frontend application that uses the Knowledge Graph backed RAG pipeline to answer questions.
+    subdomain: ai-question-answering
+    kernel: python3
+    cpu: 2
+    memory: 16
+    gpu: 1
+    environment_variables:
+      TASK_TYPE: START_APPLICATION
