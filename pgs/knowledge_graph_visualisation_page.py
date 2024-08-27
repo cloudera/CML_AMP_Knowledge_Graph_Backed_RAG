@@ -159,7 +159,7 @@ paper_col, viz_col = st.columns([0.4, 0.6], gap="small")
 paper_col.markdown("## :blue[_arXiv_] papers in the Knowledge Graph")
 paper_container = paper_col.container(height=700, border=False)
 graph_header = viz_col.container(border=False)
-graph_container = viz_col.container(height=600, border=False)
+graph_container = viz_col.container(height=700, border=False)
 
 
 def button_callback(arxiv_id: str):
@@ -169,7 +169,7 @@ def button_callback(arxiv_id: str):
     htmlfile_source_code = htmlfile.read()
     graph_container.empty()
     with graph_container:
-        components.html(htmlfile_source_code, height=570, scrolling=True)
+        components.html(htmlfile_source_code, height=662, scrolling=True)
     viz_col.markdown(
         f"""
 Showing :violet[first] and :green[second] degree \"cited by\" relationships for paper #[{arxiv_id}](https://arxiv.org/abs/{arxiv_id}).
