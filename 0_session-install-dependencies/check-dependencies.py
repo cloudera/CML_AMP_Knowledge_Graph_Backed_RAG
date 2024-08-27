@@ -1,4 +1,5 @@
 import sys
+
 from utils.check_dependency import check_unauthenticated_access_to_app_enabled
 
 if check_unauthenticated_access_to_app_enabled() == False:

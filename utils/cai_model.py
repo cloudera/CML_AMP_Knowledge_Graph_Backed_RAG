@@ -1,8 +1,7 @@
+from typing import Any, Dict
+
 from langchain_openai import OpenAI
-from typing import (
-    Any,
-    Dict,
-)
+
 
 class CAIHostedOpenAI(OpenAI):
     @property
@@ -25,9 +24,11 @@ class CAIHostedOpenAI(OpenAI):
             normal_params["best_of"] = self.best_of
 
         return {**normal_params, **self.model_kwargs}
-    
 
-def getCAIHostedOpenAIModels(base_url: str, model: str, api_key: str, max_tokens: int = 1024, **kwargs) -> CAIHostedOpenAI:
+
+def getCAIHostedOpenAIModels(
+    base_url: str, model: str, api_key: str, max_tokens: int = 1024, **kwargs
+) -> CAIHostedOpenAI:
     m = CAIHostedOpenAI(
         base_url=base_url,
         model=model,
@@ -36,7 +37,8 @@ def getCAIHostedOpenAIModels(base_url: str, model: str, api_key: str, max_tokens
         **kwargs,
     )
     old_create = m.client.create
-    m.client.create = lambda prompt, **params: old_create(prompt=prompt[0] if isinstance(prompt, list) else prompt, **params)
+    m.client.create = lambda prompt, **params: old_create(
+        prompt=prompt[0] if isinstance(prompt, list) else prompt, **params
+    )
 
     return m
-

@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 
@@ -39,6 +40,7 @@ def check_unauthenticated_access_to_app_enabled():
     )
 
     return allow_unauthenticated_access_to_app
+
 
 if __name__ == "__main__":
     print("Checking the enablement and availibility of GPU in the workspace")

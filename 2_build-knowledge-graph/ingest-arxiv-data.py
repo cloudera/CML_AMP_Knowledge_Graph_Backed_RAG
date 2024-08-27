@@ -1,21 +1,29 @@
 import os
+
 from dotenv import load_dotenv
-from langchain.graphs import Neo4jGraph
-from langchain.vectorstores.neo4j_vector import Neo4jVector
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 from langchain.docstore.document import Document
+from langchain.graphs import Neo4jGraph
+from langchain.text_splitter import (
+    CharacterTextSplitter,
+    RecursiveCharacterTextSplitter,
+)
+from langchain.vectorstores.neo4j_vector import Neo4jVector
 
 import utils.constants as const
-
-from utils.data_utils import (
-    create_query_for_category_insertion, 
-    create_indices_queries, 
-    create_cypher_batch_query_to_insert_arxiv_papers,
-    create_cypher_batch_query_to_create_citation_relationship
-)
-from utils.neo4j_utils import get_neo4j_credentails, is_neo4j_server_up, reset_neo4j_server, wait_for_neo4j_server
 from utils.arxiv_utils import create_paper_object_from_arxiv_id
+from utils.data_utils import (
+    create_cypher_batch_query_to_create_citation_relationship,
+    create_cypher_batch_query_to_insert_arxiv_papers,
+    create_indices_queries,
+    create_query_for_category_insertion,
+)
 from utils.huggingface_utils import cache_and_load_embedding_model
+from utils.neo4j_utils import (
+    get_neo4j_credentails,
+    is_neo4j_server_up,
+    reset_neo4j_server,
+    wait_for_neo4j_server,
+)
 
 load_dotenv()
 
@@ -38,10 +46,10 @@ Neo4jVector.from_existing_graph(
     url=get_neo4j_credentails()["uri"],
     username=get_neo4j_credentails()["username"],
     password=get_neo4j_credentails()["password"],
-    index_name='category_embedding_index',
+    index_name="category_embedding_index",
     node_label="Category",
-    text_node_properties=['title', 'description'],
-    embedding_node_property='embedding',
+    text_node_properties=["title", "description"],
+    embedding_node_property="embedding",
 )
 
 for q in create_indices_queries():
@@ -50,7 +58,11 @@ for q in create_indices_queries():
 arxiv_ids_set = set(const.seed_arxiv_paper_ids)
 arxiv_ids_set.update(
     [
-        cited_paper for cited_papers in [create_paper_object_from_arxiv_id(seed_paper_id).cited_arxiv_papers for seed_paper_id in const.seed_arxiv_paper_ids] 
+        cited_paper
+        for cited_papers in [
+            create_paper_object_from_arxiv_id(seed_paper_id).cited_arxiv_papers
+            for seed_paper_id in const.seed_arxiv_paper_ids
+        ]
         for cited_paper in cited_papers
     ]
 )
@@ -90,11 +102,15 @@ for paper in papers_to_insert:
     graph.query(query)
     print(f"Created citation relationships for paper {paper.arxiv_id}")
 
-raw_docs = [Document(page_content=p.full_text, metadata={"arxiv_id": p.arxiv_id}) for p in papers_to_insert]
+raw_docs = [
+    Document(page_content=p.full_text, metadata={"arxiv_id": p.arxiv_id})
+    for p in papers_to_insert
+]
 # Define chunking strategy
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
     encoding_name="cl100k_base",
-    chunk_size=1000, chunk_overlap=20,
+    chunk_size=1000,
+    chunk_overlap=20,
     disallowed_special=(),
 )
 # Chunk the document
@@ -131,23 +147,29 @@ for i, doc in enumerate(documents):
     document_batch.clear()
 
 # Link the chunks to the papers
-graph.query("""
+graph.query(
+    """
 MATCH (p:Paper), (c:Chunk)
 WHERE p.id = c.arxiv_id
 MERGE (p)-[:CONTAINS_TEXT]->(c)
-""")
+"""
+)
 
 # Delete orphan chunks with no papers
-graph.query("""
+graph.query(
+    """
 MATCH (c:Chunk)
 WHERE NOT (c)<-[:CONTAINS_TEXT]-()
 DETACH DELETE c
-""")
+"""
+)
 
 # Get the number of chunks finally present in the DB
-chunk_count = graph.query("""
+chunk_count = graph.query(
+    """
 MATCH (c:Chunk)
 RETURN COUNT(c) as chunk_count
-""")[0]["chunk_count"]
+"""
+)[0]["chunk_count"]
 
 print(f"Number of chunks in the inserted into the knowledge graph: {chunk_count}")

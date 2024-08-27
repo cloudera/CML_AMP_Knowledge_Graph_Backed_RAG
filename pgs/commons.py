@@ -1,13 +1,14 @@
 import gc
+import time
 from enum import Enum
 
-import time
 import streamlit as st
 import torch
 from langchain_core.language_models.llms import BaseLLM
 
 import utils.constants as const
-from utils.huggingface_utils import load_local_model, cache_and_load_embedding_model
+from utils.huggingface_utils import cache_and_load_embedding_model, load_local_model
+
 
 @st.cache_resource(show_spinner=False)
 def get_cached_local_model() -> BaseLLM:
@@ -16,12 +17,15 @@ def get_cached_local_model() -> BaseLLM:
     progress_bar.progress(30, "Emptying CUDA cache.")
     with torch.no_grad():
         torch.cuda.empty_cache()
-    progress_bar.progress(60, f"Loading local {const.local_model_to_be_quantised} model.")
+    progress_bar.progress(
+        60, f"Loading local {const.local_model_to_be_quantised} model."
+    )
     local_llm = load_local_model()
     progress_bar.progress(99, "Model loaded successfully.")
     time.sleep(1.0)
     progress_bar.empty()
     return local_llm
+
 
 @st.cache_resource(show_spinner=False)
 def get_cached_embedding_model():
@@ -31,11 +35,14 @@ def get_cached_embedding_model():
     progress_bar.empty()
     return embedding
 
+
 class StateVariables(Enum):
     REMOTE_MODEL_ENDPOINT = "remote_model_endpoint"
     REMOTE_MODEL_ID = "remote_model_id"
     REMOTE_MODEL_API_KEY = "remote_model_api_key"
     IS_REMOTE_LLM = "is_remote_llm"
+    QUESTION_FROM_DROPDOWN = "question_from_dropdown"
+
 
 example_questions = [
     "What is the difference between GPT-3 and GPT-4?",
@@ -60,4 +67,3 @@ The papers and authors are depicted by nodes below. The type of node is indicate
 
 **Please click on the nodes to redirect to the arXiv link of the paper.**
 """
-response_container_height = 750

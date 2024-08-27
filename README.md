@@ -1,4 +1,4 @@
-# Knowledge Graph backed RAG AMP
+# Knowledge Graph powered RAG AMP
 
 This repository demonstrates how to power a RAG(Retrieval Augmented Generation) application with a knowledge graph(supported by graph DBs like [Neo4j](https://neo4j.com/)) to capture relationships and contexts not easily accessible if vector databases are being used in a RAG pipeline
 
@@ -22,7 +22,7 @@ The AMP is designed to run on and expects [Meta-Llama-3.1-8B-Instruct](https://h
 
 **HF_TOKEN** : The AMP relies on [Huggingface Token](https://huggingface.co/docs/hub/en/security-tokens) to pull [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model from HuggingFace.
 
-*Note*: Please make sure that the account associated with the HuggingFace token has access to the abovementioned model. It does require filling up a form to obtain access.
+***Note***: Please make sure that the account associated with the HuggingFace token has access to the abovementioned model. It does require filling up a form to obtain access.
 
 ## AMP Concepts
 
@@ -98,7 +98,7 @@ We leverage KG in two ways in order to make this RAG system better than plain(va
  1. We aim to enhance the quality of context retreived by choosing chunks from relatively "high-quality" papers.
  2. Provide additional information about the papers used to answer a certain question, which could have been more complex in case of traditional vector databases.
 
-### Hybrid RAG
+### Knowledge Graph RAG
 
 Since we have a small but related set of AI/ML papers, there would be a lot of "citation" relationships between papers. We define a paper to be of **"Higher Quality"** if it has more number of citations. The number of citations can be computed for a specific paper from the knowledge graph that we have built.
 
@@ -121,20 +121,30 @@ We instruct the LLM to provide us the [arXiv IDs](https://info.arxiv.org/help/ar
 
 <span class="caption">The image shows "Top Authors" & "Related Papers" for the "Attention Is All You Need" paper.</span>
 
+## Knowledge Graph Construction
+
+ - We start off with some predefined(seed) AI/ML papers as mentioned in [constants.py](./utils/constants.py)
+ - The arXiv papers cited by the "seed" papers are extracted by converted the paper PDFs to text and matching with regex pattern to extract the arXiv IDs of the papers mentioned. This step results in ~600 uniques papers in our knowledge base.
+ - For each of these papers, we download the PDF, extract chunks out of the PDF text, calculate vector embedding in save in the graph database.
+ - The citation information is then captured in relationships between "Paper" nodes. The "Chunk" nodes are also linked to the papers they are coming from.
+<img src="./assets/paper_with_chunks_and_authors.png"  width="50%" height="50%" />
+
+<span class="caption">The image shows the paper #[2403.20183](https://arxiv.org/abs/2403.20183v3) with citations, authors, and the chunks(represented as <span style="color:yellow">yellow nodes</span>) as part of the Knowledge Graph.</span>
+
 ## AMP Flow
 
- 1. The AMP and the underlying promts are designed to run on Llama 3 family of models, especially [Meta-Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct). The first page gives two choices:
-   - Use in-session 4-bit quantized version of Llama 3.1 Instruct. The model is already cached in the project volume as part of AMP steps.
-   - Bring-Your-Own-Llama-3.1: You can provide OpenAI APi comptatible endpoint, along with Model ID and authorization token. There are various providers offering free tier API usage like [OpenRouter](https://openrouter.ai/models/meta-llama/llama-3.1-8b-instruct:free). Alternatively, you can also use Llama 3.1 hosted on **Cloudera AI Inference** service which has been [tech previewed](https://blog.cloudera.com/cloudera-introduces-ai-inference-service-with-nvidia-nim/).  
-   ![LLM selection page](./assets/llm_selection_page.gif)
+ 1. In the first page, we can ask the application any AI/ML related questions and it will try to answer from the existing knowledge base that the application has. It will produce answers for the question using Knowledge Graph powered context retrieval and context retrieval just using vector search. The application will output:
+    - Context used for both Knowledge Graph RAG and Vanilla RAG.
+    - The answers synthesized by LLM using the context for both RAGs.
+    - Related papers and top authors for the papers used to construct the answer in case of Knowledge Graph RAG.
+    - A graphical representation of related papers and top authors.
+ <img src="./assets/main_page_1.png"  width="50%" height="50%" /> <img src="./assets/main_page_2.png"  width="49%" height="49%" />
 
- 2. In the next page, we can ask the RAG pipeline AI/ML related question. It will produce 3 outputs:
-    - Answer using Vanilla RAG, as if we are running a plain old vector database, with no reranking of chunks.
-    - Answer using Hybrid RAG, where we rerank the chunks based on the "quality" of the papers.
-    - A follow-up information about the papers used to generate the answer in case of Hybrid RAG.
-  
-  3. The page also contains a "graphical" representation of the papers used, related papers and top authors.   
-  ![RAG page](./assets/rag_page_gif.gif)
+  2. Although the application uses an in-session 4-bit quantised flavor of [Meta-Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct), we can use a remotely hosted Llama3/3.1 model to power the application. The second page gives option to switch to remote LLM. There are various providers offering free tier API usage like [OpenRouter](https://openrouter.ai/models/meta-llama/llama-3.1-8b-instruct:free). Alternatively, you can also use Llama 3.1 hosted on **Cloudera AI Inference** service which has been [tech previewed](https://blog.cloudera.com/cloudera-introduces-ai-inference-service-with-nvidia-nim/).
+  ![LLM selection page](./assets/llm_selection_page.gif)
+
+  3. The third page gives an list of all papers contained in the knowledge-base. We can select any of these papers and graphically visualize the first and second order "cited by" relationships from other other papers.
+  ![Knowledge Graph page](./assets/knowledge_graph_page_screenshot.png)
 
 ## AMP Requirements
 
@@ -147,4 +157,4 @@ We instruct the LLM to provide us the [arXiv IDs](https://info.arxiv.org/help/ar
    - Tested with Nvidia Tesla T4 GPU (AWS: [g4dn series](https://aws.amazon.com/ec2/instance-types/g4/), Azure: [Standard_NC4as_T4_v3](https://learn.microsoft.com/en-us/azure/virtual-machines/nct4-v3-series))
 
 ### CML Runtime
- - PBJ-wWrkbench - Python3.10 - Nvidia GPU - 2023.05
+ - PBJ-Workbench - Python3.10 - Nvidia GPU - 2023.05
