@@ -172,10 +172,8 @@ def button_callback(arxiv_id: str):
         components.html(htmlfile_source_code, height=570, scrolling=True)
     viz_col.markdown(
         f"""
-Showing first and second degree \"cited by\" relationships for paper #[{arxiv_id}](https://arxiv.org/abs/{arxiv_id})
- - :blue[Blue] : The selected paper
- - :violet[Violet] : Papers that cite the selected paper
- - :green[Green] : Papers that cite the papers that cite the selected paper
+Showing :violet[first] and :green[second] degree \"cited by\" relationships for paper #[{arxiv_id}](https://arxiv.org/abs/{arxiv_id}).
+The paper #[{arxiv_id}](https://arxiv.org/abs/{arxiv_id}) is shown in :blue[blue].
 """
     )
 
