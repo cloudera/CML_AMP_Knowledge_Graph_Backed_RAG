@@ -169,7 +169,7 @@ def button_callback(arxiv_id: str):
     htmlfile_source_code = htmlfile.read()
     graph_container.empty()
     with graph_container:
-        components.html(htmlfile_source_code, height=662, scrolling=True)
+        components.html(htmlfile_source_code, height=670, scrolling=True)
     viz_col.markdown(
         f"""
 Showing :violet[first] and :green[second] degree \"cited by\" relationships for paper #[{arxiv_id}](https://arxiv.org/abs/{arxiv_id}).
