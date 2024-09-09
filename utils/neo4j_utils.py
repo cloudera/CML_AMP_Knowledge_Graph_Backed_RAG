@@ -76,9 +76,9 @@ def create_deployment_spec_for_neo4j():
                 metadata=client.V1ObjectMeta(labels={"app": f"neo4j-{engine_id}"}),
                 spec=client.V1PodSpec(
                     security_context=client.V1PodSecurityContext(
-                        fs_group=2000,
-                        run_as_group=3000,
-                        run_as_user=1000,
+                        fs_group=8536,
+                        run_as_group=8536,
+                        run_as_user=8536,
                         run_as_non_root=True,
                     ),
                     containers=[

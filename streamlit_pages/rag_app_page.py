@@ -7,8 +7,8 @@ from langchain.graphs import Neo4jGraph
 from langchain_community.vectorstores import Neo4jVector
 from langchain_core.language_models.llms import BaseLLM
 
-import pgs.commons as st_commons
-import pgs.graph_visualisation as st_graph_viz
+import streamlit_pages.commons as st_commons
+import streamlit_pages.graph_visualisation as st_graph_viz
 import utils.constants as const
 from utils.arxiv_utils import (
     IngestablePaper,
@@ -202,13 +202,13 @@ def generate_responses_v2(input_text):
 
 with st.form("my_form"):
     input_text = ""
-    st.session_state[
-        st_commons.StateVariables.QUESTION_FROM_DROPDOWN.value
-    ] = st.selectbox(
-        "Select from a list of sample questions",
-        st_commons.example_questions,
-        index=None,
-        placeholder="Select an example question...",
+    st.session_state[st_commons.StateVariables.QUESTION_FROM_DROPDOWN.value] = (
+        st.selectbox(
+            "Select from a list of sample questions",
+            st_commons.example_questions,
+            index=None,
+            placeholder="Select an example question...",
+        )
     )
     input_text = st.text_area(
         "...Or ask your own AI/ML related question here.",

@@ -1,5 +1,7 @@
 import os
 
+# We are using some predefined arxiv papers to populate the knowledge graph.
+# The knowledge graph will be constucted with these papers and the first degree citations of these papers.
 seed_arxiv_paper_ids = [
     "1910.01108",
     # https://github.com/aimerou/awesome-ai-papers?tab=readme-ov-file

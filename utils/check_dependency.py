@@ -45,4 +45,3 @@ def check_unauthenticated_access_to_app_enabled():
 if __name__ == "__main__":
     print("Checking the enablement and availibility of GPU in the workspace")
     check_gpu_enabled()
-    # check_gpu_launch()

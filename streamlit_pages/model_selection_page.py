@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-import pgs.commons as st_commons
+import streamlit_pages.commons as st_commons
 import utils.constants as const
 
 cwd = os.getcwd()
@@ -36,15 +36,15 @@ def choose_llm_action():
         st_commons.get_cached_local_model()
         st.session_state[st_commons.StateVariables.IS_REMOTE_LLM.value] = False
     else:
-        st.session_state[
-            st_commons.StateVariables.REMOTE_MODEL_ENDPOINT.value
-        ] = remote_model_endpoint
-        st.session_state[
-            st_commons.StateVariables.REMOTE_MODEL_ID.value
-        ] = remote_model_id
-        st.session_state[
-            st_commons.StateVariables.REMOTE_MODEL_API_KEY.value
-        ] = remote_model_api_key
+        st.session_state[st_commons.StateVariables.REMOTE_MODEL_ENDPOINT.value] = (
+            remote_model_endpoint
+        )
+        st.session_state[st_commons.StateVariables.REMOTE_MODEL_ID.value] = (
+            remote_model_id
+        )
+        st.session_state[st_commons.StateVariables.REMOTE_MODEL_API_KEY.value] = (
+            remote_model_api_key
+        )
         st.session_state[st_commons.StateVariables.IS_REMOTE_LLM.value] = True
 
 
@@ -66,4 +66,4 @@ llm_chosen = st.button(
     "Apply preferences and return to application", on_click=choose_llm_action
 )
 if llm_chosen:
-    st.switch_page(cwd + "/pgs/rag_app_page.py")
+    st.switch_page(cwd + "/streamlit_pages/rag_app_page.py")

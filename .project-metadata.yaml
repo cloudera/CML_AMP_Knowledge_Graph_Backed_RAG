@@ -44,8 +44,6 @@ tasks:
     cpu: 2
     memory: 8
     gpu: 1
-    environment:
-      TASK_TYPE: CREATE/RUN_JOB
   - type: run_job
     entity_label: download-models-kg-amp
   - type: create_job
@@ -58,8 +56,6 @@ tasks:
     cpu: 2
     memory: 16
     gpu: 1
-    environment:
-      TASK_TYPE: CREATE/RUN_JOB
   - type: run_job
     entity_label: build-graph-kg-amp
   - type: start_application
@@ -71,5 +67,3 @@ tasks:
     cpu: 2
     memory: 16
     gpu: 1
-    environment_variables:
-      TASK_TYPE: START_APPLICATION
