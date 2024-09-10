@@ -20,9 +20,22 @@ The AMP is designed to run on and expects [Meta-Llama-3.1-8B-Instruct](https://h
 
 ### Configurable Options
 
-**HF_TOKEN** : The AMP relies on [Huggingface Token](https://huggingface.co/docs/hub/en/security-tokens) to pull [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model from HuggingFace.
+**HF_TOKEN** : The AMP relies on [Huggingface Token](https://huggingface.co/docs/hub/en/security-tokens) to pull [NousResearch/Meta-Llama-3.1-8B-Instruct](https://huggingface.co/NousResearch/Meta-Llama-3.1-8B-Instruct) model from HuggingFace.
 
-***Note***: Please make sure that the account associated with the HuggingFace token has access to the abovementioned model. It does require filling up a form to obtain access.
+
+## AMP Requirements
+
+### CPU
+ - CML CPU workloads with resource profiles up to **(2 vCPU/16 GiB memory)** would be provisioned.
+ - **Additional resource of (1 vCPU/4 GiB)** memory would be requested to run Neo4j graph DB instance. There is no requirement of GPU enabled node here, can it may be scheduled on CPU-only node as well.
+
+### GPU
+ - Nvidia GPU with 16GB vRAM is required at minimum(to run both the embedding model & quantized LLM).
+   - Tested with Nvidia Tesla T4 GPU (AWS: [g4dn series](https://aws.amazon.com/ec2/instance-types/g4/), Azure: [Standard_NC4as_T4_v3](https://learn.microsoft.com/en-us/azure/virtual-machines/nct4-v3-series))
+
+### CML Runtime
+ - PBJ-Workbench - Python3.10 - Nvidia GPU - 2023.05
+
 
 ## AMP Concepts
 
@@ -146,15 +159,3 @@ We instruct the LLM to provide us the [arXiv IDs](https://info.arxiv.org/help/ar
   3. The third page gives an list of all papers contained in the knowledge-base. We can select any of these papers and graphically visualize the first and second order "cited by" relationships from other other papers.
   ![Knowledge Graph page](./assets/knowledge_graph_page_screenshot.png)
 
-## AMP Requirements
-
-### CPU
- - CML CPU workloads with resource profiles up to **(2 vCPU/16 GiB memory)** would be provisioned.
- - **Additional resource of (1 vCPU/4 GiB)** memory would be requested to run Neo4j graph DB instance. There is no requirement of GPU enabled node here, can it may be scheduled on CPU-only node as well.
-
-### GPU
- - Nvidia GPU with 16GB vRAM is required at minimum(to run both the embedding model & quantized LLM).
-   - Tested with Nvidia Tesla T4 GPU (AWS: [g4dn series](https://aws.amazon.com/ec2/instance-types/g4/), Azure: [Standard_NC4as_T4_v3](https://learn.microsoft.com/en-us/azure/virtual-machines/nct4-v3-series))
-
-### CML Runtime
- - PBJ-Workbench - Python3.10 - Nvidia GPU - 2023.05
