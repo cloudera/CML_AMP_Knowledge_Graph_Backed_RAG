@@ -59,7 +59,7 @@ tasks:
   - type: run_job
     entity_label: build-graph-kg-amp
   - type: start_application
-    name: Start the RAG QA application
+    name: Knowledge Graph powered RAG
     script: 3_launch_application/streamlit_entrypoint.py
     short_summary: Run the frontend application that uses the Knowledge Graph backed RAG pipeline to answer questions.
     subdomain: ai-question-answering

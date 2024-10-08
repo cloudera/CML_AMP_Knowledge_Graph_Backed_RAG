@@ -87,7 +87,7 @@ def colbert_based_retreiver(
 def hybrid_retreiver(
     query: str, top_k: int, graphDbInstance: Neo4jGraph, document_index: Neo4jVector
 ) -> List[PaperChunk]:
-    colbert_score_weight, citation_count_weight = 0.5, 0.5
+    colbert_score_weight, citation_count_weight = 0.33, 0.66
     colbert_results = colbert_based_retreiver(
         query=query,
         top_k=2 * top_k,
@@ -100,10 +100,12 @@ def hybrid_retreiver(
     for c in colbert_results:
         c.metadata.update(
             {
-                "hybrid_score": colbert_score_weight
-                * c.metadata["colbert_score"]
-                / max_colbert_score
-                + citation_count_weight * c.paper.citation_count / max_citation_count
+                "hybrid_score": (
+                    colbert_score_weight
+                    * c.metadata["colbert_score"]
+                    / max_colbert_score
+                )
+                + (citation_count_weight * c.paper.citation_count / max_citation_count)
             }
         )
 
