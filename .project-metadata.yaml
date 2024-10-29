@@ -1,6 +1,6 @@
 name: Question Answering ChatBot powered by Knowledge Graph
 description: |
-  This AMP demonstrates how to leverage knowledge graph to enhance the quality and information of the answers produced by LLM in a RAG pipeline. The knowledge base consits of a sizable corpus of AI/ML related papers from arXiv. The knwoledge graph captures additional information like citations between the papers, authors and the categories that they belong to.
+  This AMP demonstrates how to leverage knowledge graph to enhance the quality and information of the answers produced by LLM in a RAG pipeline. The knowledge base consits of a sizable corpus of AI/ML related papers from arXiv. The knowledge graph captures additional information like citations between the papers, authors and the categories that they belong to.
 
 author: Cloudera Inc.
 specification_version: 1.0
