@@ -24,24 +24,6 @@ def check_gpu_enabled():
     return True
 
 
-def check_unauthenticated_access_to_app_enabled():
-    APIv1 = os.getenv("CDSW_API_URL")
-    PATH = "site/config/"
-    API_KEY = os.getenv("CDSW_API_KEY")
-
-    url = "/".join([APIv1, PATH])
-    res = requests.get(
-        url,
-        headers={"Content-Type": "application/json"},
-        auth=(API_KEY, ""),
-    )
-    allow_unauthenticated_access_to_app = res.json().get(
-        "allow_unauthenticated_access_to_app"
-    )
-
-    return allow_unauthenticated_access_to_app
-
-
 if __name__ == "__main__":
     print("Checking the enablement and availibility of GPU in the workspace")
     check_gpu_enabled()
