@@ -59,7 +59,7 @@ Semantic search is a search engine technology that interprets the meaning of wor
 **Vector Search** is a method for doing semantic search, used heavily in RAG pipelines. Vector search in a RAG context follows a series of steps:
  - We already have a corpus of text and their corresponding [vector embeddings](https://www.elastic.co/what-is/vector-embedding) stored in the database.
  - The vector embedding of the user query is calculated.
- - A vector similarity search is performed accross the database using a calculated embedding as the referance and top *k* results are retreived.
+ - A vector similarity search is performed accross the database using a calculated embedding as the referance and top *k* results are retrieved.
 
 ![Vector Search Diagram](./assets/vector-search-diagram.png)
 <span class="caption">A simple diagram showing the flow of a vector search. Credits: [Elasticsearch B.V.](https://www.elastic.co/what-is/vector-embedding)</span>
@@ -108,7 +108,7 @@ Each passage(or chunk) is assgined a ColBERT score based upon similarity to the 
 ## How does Knowledge Graph fit in our AMP?
 
 We leverage KG in two ways in order to make this RAG system better than plain(vanilla) RAG:
- 1. We aim to enhance the quality of context retreived by choosing chunks from relatively "high-quality" papers.
+ 1. We aim to enhance the quality of context retrieved by choosing chunks from relatively "high-quality" papers.
  2. Provide additional information about the papers used to answer a certain question, which could have been more complex in case of traditional vector databases.
 
 ### Knowledge Graph RAG
